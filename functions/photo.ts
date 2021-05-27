@@ -6,7 +6,7 @@ export const handler = async () => {
     const html = await getHtml("/photo/photo.htm");
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json;charset=utf-8" },
       body: JSON.stringify(parsePhotoHtml(html)),
     };
   } catch (e) {
