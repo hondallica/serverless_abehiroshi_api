@@ -1,4 +1,4 @@
-import cheerio from "cheerio";
+import { load } from "cheerio";
 
 interface TableContent {
   date: string;
@@ -7,7 +7,7 @@ interface TableContent {
 }
 
 export const parseProfileHtml = (html: string) => {
-  const $ = cheerio.load(html);
+  const $ = load(html);
 
   let res: { [x: string]: unknown } = {};
   $("tr").each((_i, elem) => {
@@ -28,7 +28,7 @@ export const parseProfileHtml = (html: string) => {
 };
 
 export const parseMovieHtml = (html: string) => {
-  const $ = cheerio.load(html);
+  const $ = load(html);
 
   let res: TableContent[] = [];
 
@@ -45,7 +45,7 @@ export const parseMovieHtml = (html: string) => {
 };
 
 export const parseTvHtml = (html: string) => {
-  const $ = cheerio.load(html);
+  const $ = load(html);
 
   let res: TableContent[] = [];
 
@@ -61,7 +61,7 @@ export const parseTvHtml = (html: string) => {
 };
 
 export const parseStageHtml = (html: string) => {
-  const $ = cheerio.load(html);
+  const $ = load(html);
 
   let res: {
     stage: TableContent[];
@@ -112,7 +112,7 @@ export const parseStageHtml = (html: string) => {
 };
 
 export const parsePhotoHtml = (html: string) => {
-  const $ = cheerio.load(html);
+  const $ = load(html);
 
   let res: { type: string; title: string }[] = [];
 
@@ -128,7 +128,7 @@ export const parsePhotoHtml = (html: string) => {
 };
 
 export const parseEssayHtml = (html: string) => {
-  const $ = cheerio.load(html);
+  const $ = load(html);
 
   let res: string[] = [];
 
