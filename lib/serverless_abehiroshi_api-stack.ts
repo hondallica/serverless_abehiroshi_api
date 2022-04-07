@@ -1,13 +1,17 @@
-import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
-import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
-import { Duration } from "@aws-cdk/core";
+import {
+  Stack,
+  StackProps,
+  Duration,
+  aws_lambda as lambda,
+  aws_lambda_nodejs as nodejs,
+} from "aws-cdk-lib";
+import { Construct } from "constructs";
 import * as path from "path";
-import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
-import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
+import { HttpLambdaIntegration } from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
+import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2-alpha";
 
-export class ServerlessAbehiroshiApiStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+export class ServerlessAbehiroshiApiStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
     const abeHiroshiApi = new HttpApi(this, "AbeHiroshiApi", {
@@ -15,18 +19,21 @@ export class ServerlessAbehiroshiApiStack extends cdk.Stack {
     });
 
     ["profile", "movie", "tv", "stage", "photo", "essay"].forEach((api) => {
+      const integration = new HttpLambdaIntegration(
+        `${api}`,
+        new nodejs.NodejsFunction(this, `${api}ApiFunction`, {
+          runtime: lambda.Runtime.NODEJS_14_X,
+          memorySize: 128,
+          timeout: Duration.seconds(10),
+          handler: "handler",
+          entry: path.join(__dirname, `/../functions/${api}.ts`),
+        })
+      );
+
       abeHiroshiApi.addRoutes({
         path: `/${api}`,
         methods: [HttpMethod.GET],
-        integration: new LambdaProxyIntegration({
-          handler: new NodejsFunction(this, `${api}ApiFunction`, {
-            runtime: lambda.Runtime.NODEJS_14_X,
-            memorySize: 128,
-            timeout: Duration.seconds(10),
-            handler: "handler",
-            entry: path.join(__dirname, `/../functions/${api}.ts`),
-          }),
-        }),
+        integration,
       });
     });
   }
