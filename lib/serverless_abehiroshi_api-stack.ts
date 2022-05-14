@@ -22,7 +22,7 @@ export class ServerlessAbehiroshiApiStack extends Stack {
       const integration = new HttpLambdaIntegration(
         `${api}`,
         new nodejs.NodejsFunction(this, `${api}ApiFunction`, {
-          runtime: lambda.Runtime.NODEJS_14_X,
+          runtime: lambda.Runtime.NODEJS_16_X,
           memorySize: 128,
           timeout: Duration.seconds(10),
           handler: "handler",
